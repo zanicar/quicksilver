@@ -52,7 +52,14 @@ Keepers exposed by module;
 
 ## Parameters
 
-Module parameters;
+Module parameters:
+
+| Key   | Type  | Example |
+|:-- ---|:-- ---|:--   ---|
+
+Description of parameters:
+
+* `param_name` - short description;
 
 ## Begin Block
 

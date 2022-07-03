@@ -1,3 +1,5 @@
+// participatiorewards defines and implements the mechanisms to track, allocate
+// and distribute protocol participation rewards to users.
 package participationrewards
 
 import (
