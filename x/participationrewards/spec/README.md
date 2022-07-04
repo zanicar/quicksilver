@@ -18,6 +18,7 @@ allocate and distribute protocol participation rewards to users.
 1. [Parameters](#Parameters)
 1. [Begin Block](#Begin-Block)
 1. [End Block](#End-Block)
+1. [After Epoch End](#After-Epoch-End)
 
 ## Concepts
 
