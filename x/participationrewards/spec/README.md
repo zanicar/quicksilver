@@ -2,7 +2,7 @@
 
 ## Abstract
 
-Module, x/participatiorewards, defines and implements the mechanisms to track,
+Module, `x/participatiorewards`, defines and implements the mechanisms to track,
 allocate and distribute protocol participation rewards to users.
 
 ## Contents
@@ -83,9 +83,14 @@ qAssets across all zones, capped at 2% per account.
 
 ## State
 
-Participation Rewards maintains a `Score` for every `Validator` within a `Zone`.
-`Score` is initially set to zero and is updated at the end of every epoch to
-reflect the **overall score** for the validator (decntralization_score * performance_score).
+A `Score` is maintained for every `Validator` within a `Zone`. `Score` is
+initially set to zero and is updated at the end of every epoch to reflect the
+**overall score** for the validator (decntralization_score * performance_score).
+
+A `ValidatorSelectionAllocation` and `HoldingsAllocation` are maintained for
+every `Zone`. These are calculated and set at the end of every epoch according
+to the rewards allocation proportions that are distributed to zones based on
+their Total Value Locked (TVL) relative to the TVL of the overall protocol.
 
 ## Messages
 
@@ -126,7 +131,7 @@ Keepers exposed by module;
 Module parameters:
 
 | Key                                                     | Type         | Example |
-|:--                                                   ---|:--        ---|:--   ---|
+|:--------------------------------------------------------|:-------------|:--------|
 | distribution_proportions.validator_selection_allocation | string (dec) | "0.34"  |
 | distribution_proportions.holdings_allocation            | string (dec) | "0.33"  |
 | distribution_proportions.lockup_allocation              | string (dec) | "0.33"  |
