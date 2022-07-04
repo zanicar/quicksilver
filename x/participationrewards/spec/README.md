@@ -82,7 +82,9 @@ qAssets across all zones, capped at 2% per account.
 
 ## State
 
-Module specific state;
+Participation Rewards maintains a `Score` for every `Validator` within a `Zone`.
+`Score` is initially set to zero and is updated at the end of every epoch to
+reflect the **overall score** for the validator (decntralization_score * performance_score).
 
 ## Messages
 
@@ -102,7 +104,17 @@ Description of hook functions that may be used by other modules to execute opera
 
 ## Queries
 
-Description of available information request queries;
+Participation Rewards module provides the below queries to check the module's state:
+
+```
+service Query {
+  // Params returns the total set of participation rewards parameters.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get =
+        "/quicksilver/participationrewards/v1beta1/params";
+  }
+}
+```
 
 ## Keepers
 
@@ -132,3 +144,24 @@ Description of logic executed with optional methods or external hooks;
 
 Description of logic executed with optional methods or external hooks;
 
+## After Epoch End
+
+The following is performed at the end of every epoch:
+
+* Obtains the rewards allocations according to the module balances and
+  distribution proportions parameters;
+* Allocate zone rewards according to the proportional zone Total Value Locked
+  (TVL) for both **Validator Selection** and **qAsset Holdings**;
+* Calculate validator selection scores and allocations for every zone:
+  1. Obtain performance account delegation rewards (`performanceScores`);
+  2. Calculate decentralization scores (`distributionScores`);
+  3. Calculate overall validator scores;
+  4. Calculate user validator selection rewards;
+  5. Distribute validator selection rewards;
+* Calculate qAsset holdings:
+  1. Obtain qAssets held by account (locally and off-chain via claims / Poof of
+     Posession);
+  2. Calculate user proportion (cap at 2%);
+  3. Normalize and distribute allocation;
+* Allocate lockup rewards by sending portion to `feeCollector` for distribution
+  by Staking Module;
