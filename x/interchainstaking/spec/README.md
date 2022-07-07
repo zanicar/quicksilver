@@ -183,7 +183,42 @@ type Delegation struct {
 
 ## Messages
 
-Description of message types that trigger state transitions;
+### MsgRequestRedemption
+
+Redeems the indicated qAsset coin amount from the protocol, converting the
+qAsset back to the native asset at the appropriate redemption rate.
+
+```
+type MsgRequestRedemption struct {
+	Coin               string
+	DestinationAddress string
+	FromAddress        string
+}
+```
+
+* **Coin** - qAsset as standard cosmos sdk cli coin string, {amount}{denomination};
+* **DestinationAddress** - standard cosmos sdk bech32 address string;
+* **FromAddress** - standard cosmos sdk bech32 address string;
+
+**Transaction**: [`redeem`](#redeem)
+
+### MsgSignalIntent
+
+Signal validator delegation intent for a given zone by weight.
+
+```
+type MsgSignalIntent struct {
+	ChainId     string
+	Intents     []*ValidatorIntent
+	FromAddress string
+}
+```
+
+* **ChainId** - zone identifier string;
+* **Intents** - list of validator intents according to weight;
+* **FromAddress** - standard cosmos sdk bech32 address string;
+
+**Transaction**: [`signal-intent`](#signal-intent)
 
 ## Transactions
 
@@ -196,7 +231,7 @@ containing a decimal weight and the bech32 validator address.
 
 ### redeem
 
-Redeem tokens.
+Redeem qAssets for native tokens.
 
 `quicksilverd redeem [coins] [destination_address]`
 
@@ -407,40 +442,81 @@ rewards once all delegator rewards withdrawals have been acknowledged.
 
 #### MsgRedeemTokensforShares
 
+Triggered during execution of `Delegate` for delegation allocations that are
+not in the zone `BaseDenom`. During callback the relevant delegation record is
+updated.
+
 * **Endpoint:** `/cosmos.staking.v1beta1.MsgRedeemTokensforShares`
 * **Handler:** `HandleRedeemTokens`
 
 #### MsgTokenizeShares
+
+Triggered by `RequestRedemption` when a user redeems qAssets. Withdrawal
+records are set or updated accordingly.  
+See [MsgRequestRedemption](#MsgRequestRedemption).
 
 * **Endpoint:** `/cosmos.staking.v1beta1.MsgTokenizeShares`
 * **Handler:** `HandleTokenizedShares`
 
 #### MsgDelegate
 
+Triggered by `Delegate` whenever delagtions are made by the protocol to zone
+validators. `HandleDelegate` distinguishes `DelegationAddresses` and updates
+delegation records for these delegation accounts.
+
 * **Endpoint:** `/cosmos.staking.v1beta1.MsgDelegate`
 * **Handler:** `HandleDelegate`
 
 #### MsgBeginRedelegate
+
+Not implemented.
 
 * **Endpoint:** `/cosmos.staking.v1beta1.MsgBeginRedelegate`
 * **Handler:** `HandleBeginRedelegate`
 
 #### MsgSend
 
+Triggered by `TransferToDelegate` during `HandleReceiptTransaction`.  
+See [Deposit Interval](#Deposit-Interval).
+
 * **Endpoint:** `/cosmos.bank.v1beta1.MsgSend`
 * **Handler:** `HandleCompleteSend`
 
+`HandleCompleteSend` executes one of the following options based on the
+`FromAddress` and `ToAddress` of the msg:
+
+1. **Delegate rewards accoring to global intents.**  
+   (If `FromAddress` is the zone's `WithdrawalAddress`);
+2. **Withdraw native assets for user.**  
+   (If `FromAddress` is one of zone's `DelegationAddresses`);
+3. **Delegate amount according to delegation plan.**  
+   (If `FromAddress` is `DepositAddress` and `ToAddress` is one of zone's `DelegationAddresses`);
+
 #### MsgMultiSend
+
+Not sent?
 
 * **Endpoint:** `/cosmos.bank.v1beta1.MsgMultiSend`
 * **Handler:** `HandleCompleteMultiSend`
 
 #### MsgSetWithdrawAddress
 
+Triggered during zone initialization for every `DelegationAddresses` and
+for the `PerformanceAddress`. The purpose of using a dedicated withdrawal
+account allows for accurate rewards withdrawal accounting, that would otherwise
+be impossible as the rewards amount will only be known at the time the msg is
+triggered, and not at the time it was executed by the remote zone (due to network
+latency and different zone block times, etc).
+
 * **Endpoint:** `/cosmos.distribution.v1beta1.MsgSetWithdrawAddress`
 * **Handler:** `HandleUpdatedWithdrawAddress`
 
 #### MsgTransfer
+
+Triggered by `DistributeRewardsFromWithdrawAccount` to distribute rewards
+across the zone delegation accounts and collect fees to the module fee account.
+The `RedemptionRate` is updated accordingly.  
+See [WithdrawalAddress Balances](#WithdrawalAddress-Balances).
 
 * **Endpoint:** `/ibc.applications.transfer.v1.MsgTransfer`
 * **Handler:** `HandleMsgTransfer`
@@ -461,7 +537,7 @@ update the individual account balances `AccountBalanceCallback`, trigger the
 
 #### Delegator Delegations
 
-Query delegator delegations for each zone and update delegation records.
+Query delegator delegations for each zone and update delegation records.  
 See [After Epoch End](#After-Epoch-End).
 
 * **Query:** `cosmos.staking.v1beta1.Query/DelegatorDelegations`
@@ -469,7 +545,7 @@ See [After Epoch End](#After-Epoch-End).
 
 #### Delegate Total Rewards
 
-Withdraw delegation rewards for each zone and distribute.
+Withdraw delegation rewards for each zone and distribute.  
 See [After Epoch End](#After-Epoch-End).
 
 * **Query:** `cosmos.distribution.v1beta1.Query/DelegationTotalRewards`
@@ -477,7 +553,8 @@ See [After Epoch End](#After-Epoch-End).
 
 #### WithdrawalAddress Balances
 
-Triggered by `HandleWithdrawRewards`. See [MsgWithdrawDelegatorReward](#MsgWithdrawDelegatorReward).
+Triggered by `HandleWithdrawRewards`.  
+See [MsgWithdrawDelegatorReward](#MsgWithdrawDelegatorReward).
 
 * **Query:** `cosmos.bank.v1beta1.Query/AllBalances`
 * **Callback:** `DistributeRewardsFromWithdrawAccount`
@@ -498,8 +575,8 @@ plan is computed (`DeterminePlanForDelegation`) and then executed
 
 Triggered at zone registration when the zone performance account
 `PerformanceAddress` is created. It monitors the performance account balance
-until sufficient funds are available to execute the performance delegations.
-See [participationrewards module specs](../../participationrewards/spec/README.md).
+until sufficient funds are available to execute the performance delegations.  
+See [x/participationrewards/spec](../../participationrewards/spec/README.md).
 
 * **Query:** `cosmos.bank.v1beta1.Query/AllBalances`
 * **Callback:** `PerfBalanceCallback`

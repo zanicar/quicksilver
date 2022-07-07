@@ -171,3 +171,19 @@ The following is performed at the end of every epoch:
   3. Normalize and distribute allocation;
 * Allocate lockup rewards by sending portion to `feeCollector` for distribution
   by Staking Module;
+
+## IBC
+
+### Messages, Acknowledgements & Handlers
+
+### Queries, Requests & Callbacks
+
+This module registeres the following queries, requests and callbacks.
+
+#### Performance Delegation Rewards
+
+Queries the performance delegation rewards of the zone and computes the
+validator scores based on the performance rewards.
+
+* **Query:** `cosmos.distribution.v1beta1.Query/DelegationTotalRewards`
+* **Callback:** `ValidatorSelectionRewardsCallback`
