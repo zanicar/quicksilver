@@ -11,6 +11,7 @@ protocol. _(wip)_
 1. [State](#State)
 1. [Messages](#Messages)
 1. [Transactions](#Transactions)
+1. [Proposals](#Proposals)
 1. [Events](#Events)
 1. [Hooks](#Hooks)
 1. [Queries](#Queries)
@@ -234,6 +235,8 @@ containing a decimal weight and the bech32 validator address.
 Redeem qAssets for native tokens.
 
 `quicksilverd redeem [coins] [destination_address]`
+
+## Proposals
 
 ### register-zone
 
