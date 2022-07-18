@@ -150,7 +150,7 @@ func (k *Keeper) HandleAcknowledgement(ctx sdk.Context, packet channeltypes.Pack
 			response := distrtypes.MsgSetWithdrawAddressResponse{}
 			err := proto.Unmarshal(msgData.Data, &response)
 			if err != nil {
-				k.Logger(ctx).Error("unable to unmarshal MsgMultiSend response", "error", err)
+				k.Logger(ctx).Error("unable to unmarshal MsgSetWithdrawAddress response", "error", err)
 				return err
 			}
 			k.Logger(ctx).Debug("Withdraw Address Updated", "response", response)
@@ -450,7 +450,6 @@ func (k *Keeper) HandleDelegate(ctx sdk.Context, msg sdk.Msg) error {
 			return nil
 		}
 		return fmt.Errorf("unable to find zone for address %s", delegateMsg.DelegatorAddress)
-
 	}
 
 	return k.UpdateDelegationRecordForAddress(ctx, delegateMsg.DelegatorAddress, delegateMsg.ValidatorAddress, delegateMsg.Amount, zone, false)

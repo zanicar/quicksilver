@@ -144,10 +144,6 @@ $QS2_EXEC tx gov vote 2 yes --from val6 --chain-id $CHAINID_0 -y --keyring-backe
 $QS3_EXEC tx gov vote 2 yes --from val7 --chain-id $CHAINID_0 -y --keyring-backend=test
 sleep 30
 
-#$TZ2_1_EXEC tx staking tokenize-share $VAL_VALOPER_8 10000000uosmo $VAL_ADDRESS_8 --from val8 --gas 400000 --chain-id $CHAINID_2 -y --keyring-backend=test  #1
-#$TZ2_2_EXEC tx staking tokenize-share $VAL_VALOPER_9 25000000uosmo $VAL_ADDRESS_9 --from val9 --gas 400000 --chain-id $CHAINID_2 -y --keyring-backend=test  #2
-#$TZ2_3_EXEC tx staking tokenize-share $VAL_VALOPER_10 65000000uosmo $VAL_ADDRESS_10 --from val10 --gas 400000 --chain-id $CHAINID_2 -y --keyring-backend=test  #3
-
 sleep 5
 DEPOSIT_ACCOUNT=$($QS1_EXEC q interchainstaking zones --output=json | jq .zones[1].deposit_address.address -r)
 while [[ "$DEPOSIT_ACCOUNT" == "null" ]]; do

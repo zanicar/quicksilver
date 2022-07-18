@@ -228,13 +228,21 @@ type MsgSignalIntent struct {
 Signal validator delegation intent by providing a comma seperated string
 containing a decimal weight and the bech32 validator address.
 
-`quicksilverd signal-intent [chain_id] 0.3cosmosvaloper1xxxxxxxxx,0.3cosmosvaloper1yyyyyyyyy,0.4cosmosvaloper1zzzzzzzzz`
+`quicksilverd signal-intent [chain_id] [delegation_intent]`
+
+Example:
+
+`quicksilverd signal-intent cosmoshub-4 0.3cosmosvaloper1xxxxxxxxx,0.3cosmosvaloper1yyyyyyyyy,0.4cosmosvaloper1zzzzzzzzz`
 
 ### redeem
 
 Redeem qAssets for native tokens.
 
 `quicksilverd redeem [coins] [destination_address]`
+
+Example:
+
+`quicksilverd redeem 2500000uatom cosmos1pgfzn0zhxjjgte7hprwtnqyhrn534lqk437x2w`
 
 ## Proposals
 
@@ -353,19 +361,124 @@ service Query {
 
 Query registered zones.
 
-`quicksilverd zones`
+`quicksilverd query interchainstaking zones`
+
+Example response:
+
+```
+pagination:
+  next_key: null
+  total: "2"
+zones:
+- account_prefix: cosmos
+  aggregate_intent: {}
+  base_denom: uatom
+  chain_id: lstest-1
+  connection_id: connection-0
+  delegation_addresses:
+  - address: cosmos12hww50r7q7xyhspt72c9c8n3uyknqhv208sxuq9mcqdqjv0mcreq62maa2
+    balance: []
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "25083333"
+      denom: uatom
+    port_name: icacontroller-lstest-1.delegate.9
+  ...
+  deposit_address:
+    address: cosmos146xjrj2tass9fvtcw30dtl9v8f4t26z7cjxlxw0paxyyxmx2hqcq73vk6p
+    balance:
+    - amount: "25000000"
+      denom: cosmosvaloper16pxh2v4hr28h2gkntgfk8qgh47pfmjfhvcamkc3
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "0"
+      denom: uatom
+    port_name: icacontroller-lstest-1.deposit
+  holdings_allocation: []
+  ibc_next_validators_hash: Qn4t+8M6bod6ewSYwnPScdWwwbSE7mc47GlMpuo15d0=
+  last_redemption_rate: "1.000000000000000000"
+  liquidity_module: true
+  local_denom: uqatom
+  multi_send: true
+  performance_address:
+    address: cosmos1yp64sfc5d4g4xtemptachyd2jaraxz8c5vptp7swgnv86l3ll3yqzz72wk
+    balance: []
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "0"
+      denom: uatom
+    port_name: icacontroller-lstest-1.performance
+  redemption_rate: "1.000000000000000000"
+  validator_selection_allocation: []
+  validators:
+  - commission_rate: "0.030000000000000000"
+    delegator_shares: "4000093333.000000000000000000"
+    score: "0.000000000000000000"
+    valoper_address: cosmosvaloper12evgzwsc2av7nfc5x7p74g9ppmfwm30xug6pwv
+    voting_power: "4000093333"
+  ...
+  withdrawal_address:
+    address: cosmos1w7x78xu4ms3qwspryl8jjy57l3esns8ayh6mj9g3544wmgnfnzrs86lr9p
+    balance: []
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "0"
+      denom: uatom
+    port_name: icacontroller-lstest-1.withdrawal
+  withdrawal_waitgroup: 12
+- account_prefix: osmo
+  aggregate_intent: {}
+  base_denom: uosmo
+  chain_id: lstest-2
+  connection_id: connection-1
+  delegation_addresses: []
+  deposit_address:
+    address: osmo14s68pery7n8s9cm6lzwxv4s0ppucctv28fcmtqg852965hfgpuvsmq5edm
+    balance: []
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "0"
+      denom: uosmo
+    port_name: icacontroller-lstest-2.deposit
+  holdings_allocation: []
+  ibc_next_validators_hash: TyRByZjTIrfQ81mMlvoRyg1crPx4Kk9Lur+Kkty06h8=
+  last_redemption_rate: "1.000000000000000000"
+  liquidity_module: true
+  local_denom: uqosmo
+  multi_send: true
+  performance_address:
+    address: osmo1v799s4plwuyux8xunmzxcw6y2g8t5u373ravsy2zxg7k0x8g7pdsaa8ve9
+    balance: []
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "0"
+      denom: uosmo
+    port_name: icacontroller-lstest-2.performance
+  redemption_rate: "1.000000000000000000"
+  validator_selection_allocation: []
+  validators: []
+  withdrawal_address:
+    address: osmo1xcs9r3ssmjndgr09jww29cs60ygck8g3udyl6savg3nkercfhl2qtp3lwv
+    balance: []
+    balance_waitgroup: 0
+    delegated_balance:
+      amount: "0"
+      denom: uosmo
+    port_name: icacontroller-lstest-2.withdrawal
+  withdrawal_waitgroup: 0
+```
 
 ### intent
 
 Query delegation intent for a given chain.
 
-`quicksilverd intent [chain_id] [delegator_addr]`
+`quicksilverd query interchainstaking intent [chain_id] [delegator_addr]`
 
 ### deposit-account
 
 Query deposit account address for a given chain.
 
-`quicksilverd deposit-account [chain_id]`
+`quicksilverd query interchainstaking deposit-account [chain_id]`
 
 ## Keepers
 
